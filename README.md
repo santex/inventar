@@ -10,5 +10,7 @@ python3.9 -m pip install -r requirements.txt;
 
 # run
 
-python3.9 run.py --src /<HOME>/Downloads --threads 4
+python3.9 run.py --src /<<HOME>>/Downloads --threads 4
+
+
 
