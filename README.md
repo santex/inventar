@@ -6,7 +6,7 @@ pushes contents of a file system to data list within your elastic search
 ```
 git clone git@github.com:santex/inventar.git
 cd inventar;
-python3.9 -m pip install -r requirements.txt;
+python3 -m pip install -r requirements.txt;
 ```
 
 # run
