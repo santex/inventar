@@ -172,10 +172,10 @@ def yield_docs(all_files,idx):
         else:
             tags.append("media")
         
-        if 1 in data:
-          data = {'rows':len(data),'sample':data[0] }
-        else:
-          data = {'rows':len(data),'sample':''}
+        #if 1 in data:
+        #  data = {'rows':len(data),'sample':data[0] }
+        #else:
+        #  data = {'rows':len(data),'sample':''}
 
 
         # create the _source data for the Elasticsearch doc
@@ -189,12 +189,11 @@ def yield_docs(all_files,idx):
             "size":stats[6],
             #"stats":stats,
             #"type":"private",
-            "ext":suffix,
+            #"ext":suffix,
             "create_time": str(create_time),
             "modify_time": str(modify_time),
             "tags":tags,
-            "info_time":str(now),
-            "data": data
+            "info_time":str(now)
         }
         
         # use a yield generator so that the doc data isn't loaded into memory
