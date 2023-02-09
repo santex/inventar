@@ -172,8 +172,12 @@ def yield_docs(all_files,idx):
         else:
             tags.append("media")
         
-        
-        data = {'rows':len(data) }
+        if 1 in data:
+          data = {'rows':len(data),'sample':data[0] }
+        else:
+          data = {'rows':len(data),'sample':''}
+
+
         # create the _source data for the Elasticsearch doc
         md5s= mymd5(str(_file))
         _id = "{}_{}".format(int(stats.st_ctime),md5s)
@@ -181,10 +185,10 @@ def yield_docs(all_files,idx):
             "file_tag": _id,
             "file_name": file_name,
             "full_path":_file,
-            "md5": md5s,
+            #"md5": md5s,
             "size":stats[6],
-            "stats":stats,
-            "type":"private",
+            #"stats":stats,
+            #"type":"private",
             "ext":suffix,
             "create_time": str(create_time),
             "modify_time": str(modify_time),
