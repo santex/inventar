@@ -50,16 +50,8 @@ def get_files_in_dir(self=current_path()):
 
     # iterate the files in dir using glob
     for filename in glob.glob(self + '*.*'):
-        if filename.endswith(".json") or \
-           filename.endswith(".html") or \
-           filename.endswith(".tsv") or \
-           filename.endswith(".pdf") or \
-           filename.endswith(".csv") or \
-           filename.endswith(".tsv") or \
-           filename.endswith(".mp4") or \
-           filename.endswith(".jpg") or \
-           filename.endswith(".png"):
-            file_list.append(filename)
+      if re.search(r''+args.match, filename):
+        file_list.append(filename)
 
     # return the list of filenames
     return file_list
@@ -231,6 +223,8 @@ if __name__ == "__main__":
     p.add_argument('--threads',   type=int, required=True)
     p.add_argument('--src',   type=str, default="~",required=False)
     p.add_argument('--dest',  type=str, default="inventar", required=False)
+    p.add_argument('--match',   type=str, default="",required=False)
+    p.add_argument('--ext',   type=str, default="",required=False)
 
     args = p.parse_args()
     dirs = recursive_glob(args.src,'*.*')
