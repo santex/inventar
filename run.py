@@ -202,7 +202,7 @@ if __name__ == "__main__":
                                 os.environ.get('ELASTIC_PORT'))
 
     
-    es = Elasticsearch([url],http_auth(os.environ.get('ELASTIC_USER'),os.environ.get('ELASTIC_PASS')))
+    es = Elasticsearch([url],http_auth=(os.environ.get('ELASTIC_USER'),os.environ.get('ELASTIC_PASS')))
 
     # declare a es instance of the Python Elasticsearch library
     
