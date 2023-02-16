@@ -198,13 +198,12 @@ if __name__ == "__main__":
     message = 0
     datetime = datetime.now()
 
-    url = 'http://{}:{}@{}:{}'.format(os.environ.get('ELASTIC_USER'),
-                                      os.environ.get('ELASTIC_PASS'),
-                                      os.environ.get('ELASTIC_HOST'),
-                                      os.environ.get('ELASTIC_PORT'))
+    url = 'http://{}:{}'.format(os.environ.get('ELASTIC_HOST'),
+                                os.environ.get('ELASTIC_PORT'))
 
     
-    es = Elasticsearch([url])
+    es = Elasticsearch([url],http_auth(os.environ.get('ELASTIC_USER'),
+                                      os.environ.get('ELASTIC_PASS')))
 
     # declare a es instance of the Python Elasticsearch library
     
