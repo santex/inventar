@@ -35,6 +35,31 @@ def recursive_glob(rootdir='.', pattern='*'):
 def current_path():
     return "."
 
+
+
+
+def connect2ES():
+  url = {'scheme':os.environ.get('ELASTIC_SCHEME'),
+         'host': os.environ.get('ELASTIC_HOST'),
+         'port': int(os.environ.get('ELASTIC_PORT'))}
+
+  if os.environ.get('ELASTIC_PASS'):
+    es = Elasticsearch([url],basic_auth=(os.environ.get('ELASTIC_USER'),os.environ.get('ELASTIC_PASS')))
+  else:
+    es = Elasticsearch([url])
+
+  es.options(ignore_status=[400,404])
+
+  if es.ping():
+    print('Connected to ES!')
+  else:
+    print('Not Connected to ES!')
+    sys.exit()
+
+  return es
+
+
+
 # default path is the script's current dir
 def get_files_in_dir(self=current_path()):
 
@@ -103,14 +128,17 @@ def prepare_merge(path, args):
         if fnmatch.fnmatch(i, pattern)==1:
             continue
         else:
+            #all_files=[]
             f=get_files_in_dir(i)
             if len(f) > 0:
                 print("\n\n\n[{}]\t{}".format(len(f),i))
                 for ff in f:
                     all_files.append(ff)
-                    
 
-    yield_docs(all_files,args.dest)            
+          
+    yield_docs(all_files,args.dest)
+
+        
 
 
 
@@ -134,7 +162,7 @@ def yield_docs(all_files,idx):
 
         # use 'rfind()' to get last occurence of slash
         file_name = _file[ _file.rfind(slash)+1:]
-
+        print(file_name)
         # get the file's statistics
         stats = os.stat( _file )
 #        print(stats)
@@ -164,10 +192,10 @@ def yield_docs(all_files,idx):
         else:
             tags.append("media")
         
-        #if 1 in data:
-        #  data = {'rows':len(data),'sample':data[0] }
-        #else:
-        #  data = {'rows':len(data),'sample':''}
+        if 1 in data:
+          data = {'rows':len(data),'sample':data[0] }
+        else:
+          data = {'rows':len(data),'sample':''}
 
 
         # create the _source data for the Elasticsearch doc
@@ -177,11 +205,12 @@ def yield_docs(all_files,idx):
             "file_tag": _id,
             "file_name": file_name,
             "full_path":_file,
-            #"md5": md5s,
+            "md5": md5s,
             "size":stats[6],
             #"stats":stats,
             #"type":"private",
             #"ext":suffix,
+            "data":data,
             "create_time": str(create_time),
             "modify_time": str(modify_time),
             "tags":tags,
@@ -189,7 +218,7 @@ def yield_docs(all_files,idx):
         }
         
         # use a yield generator so that the doc data isn't loaded into memory
-        res = es.index(index=idx, doc_type='_doc', body=doc_source, id=_id)
+        res = es.index(index=idx,  body=doc_source)
         print(res)
     
     
@@ -198,12 +227,7 @@ if __name__ == "__main__":
     message = 0
     datetime = datetime.now()
 
-    url = 'http://{}:{}'.format(os.environ.get('ELASTIC_HOST'),
-                                os.environ.get('ELASTIC_PORT'))
-
-    
-    es = Elasticsearch([url],http_auth=(os.environ.get('ELASTIC_USER'),os.environ.get('ELASTIC_PASS')))
-
+    es = connect2ES()
     # declare a es instance of the Python Elasticsearch library
     
     # posix uses "/", and Windows uses ""
